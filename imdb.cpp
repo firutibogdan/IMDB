@@ -1,9 +1,9 @@
 /* Copyright 2017 Andrei Petre */
 
+#include <iostream>
 #include <iterator>
 #include <string>
 #include <vector>
-#include <iostream>
 
 #include "include/imdb.h"
 #include "include/classes.h"
@@ -23,8 +23,6 @@ void IMDb::add_movie(std::string movie_name,
 }
 
 void IMDb::add_user(std::string user_id, std::string name) {
-    user new_user(user_id, name);
-
 }
 
 void IMDb::add_actor(std::string actor_id, std::string name) {
