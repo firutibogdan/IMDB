@@ -16,6 +16,8 @@ class movie {
    std::string director_name;
    std::vector<std::string> categories;
    std::vector<std::string> actor_ids;
+   double rate_sum;
+   int nr_rates;
 
 };
 

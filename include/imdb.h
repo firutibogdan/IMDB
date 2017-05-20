@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include "classes.h"
+#include "bst.h"
 
 #define NONE                            "none"
 
@@ -63,7 +64,7 @@ class IMDb {
 
  private:
     // add any variables you need here.
-    std::vector<movie> movies;
+    BinarySearchTree<movie> movies;
     std::vector<user> users;
     std::vector<actor> actors;
 };

@@ -7,6 +7,7 @@
 
 #include "include/imdb.h"
 #include "include/classes.h"
+#include "include/bst.h"
 
 IMDb::IMDb() {
     // initialize what you need here.
@@ -15,11 +16,11 @@ IMDb::IMDb() {
 IMDb::~IMDb() {}
 
 void IMDb::add_movie(std::string movie_name,
-                     std::string movie_id,
-                     int timestamp,  // unix timestamp when movie was launched
-                     std::vector<std::string> categories,
-                     std::string director_name,
-                     std::vector<std::string> actor_ids) {
+   std::string movie_id,
+   int timestamp,  // unix timestamp when movie was launched
+   std::vector<std::string> categories,
+   std::string director_name,
+   std::vector<std::string> actor_ids) {
 }
 
 void IMDb::add_user(std::string user_id, std::string name) {
@@ -49,7 +50,7 @@ void IMDb::add_actor(std::string actor_id, std::string name) {
       return;
     }
     int index = actors.size();
-    if(actor_id > actors[index -1].get_actor_id()) {
+    if(actor_id > actors[index - 1].get_actor_id()) {
       actors.push_back(new_actor);
     } else {
       for(auto it = actors.begin(); it != actors.end(); ++it) {
