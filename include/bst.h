@@ -73,8 +73,8 @@ public:
                     if(rightNode == nullptr) {
                         return nullptr;
                     } else {
-                    }
-                    return rightNode -> searchKey(x);
+                    	return rightNode -> searchKey(x);
+										}
                 }
             }
         }
