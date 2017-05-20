@@ -21,6 +21,9 @@ void IMDb::add_movie(std::string movie_name,
    std::vector<std::string> categories,
    std::string director_name,
    std::vector<std::string> actor_ids) {
+     movie new_movie(movie_name, movie_id, timestamp, categories,
+       director_name, actor_ids);
+     movies.insertKey(new_movie);
 }
 
 void IMDb::add_user(std::string user_id, std::string name) {
@@ -64,6 +67,10 @@ void IMDb::add_actor(std::string actor_id, std::string name) {
 }
 
 void IMDb::add_rating(std::string user_id, std::string movie_id, int rating) {
+  movie *mov = this -> movies.searchKey(movie_id);
+  mov -> add_rate(movie_id, rating);
+  mov -> modify_rate(rating);
+  mov ->modify_nr_rates(1);
 }
 
 void IMDb::update_rating(std::string user_id, std::string movie_id,
@@ -71,6 +78,11 @@ void IMDb::update_rating(std::string user_id, std::string movie_id,
 }
 
 void IMDb::remove_rating(std::string user_id, std::string movie_id) {
+  movie *mov = this -> movies.searchKey(movie_id);
+  int past_rate = mov -> get_user_rate(user_id);
+  mov -> add_rate(movie_id, 0);
+  mov -> modify_rate(- past_rate);
+  mov -> modify_nr_rates(-1);
 }
 
 std::string IMDb::get_rating(std::string movie_id) {

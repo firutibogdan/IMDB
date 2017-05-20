@@ -34,7 +34,7 @@ public:
             pData = new T();
             *pData = x;
         } else {
-            if(*pData > x) {
+            if(pData -> get_movie_id() > x.get_movie_id()) {
                 if(leftNode == nullptr) {
                     leftNode = new BinarySearchTree<T>;
                     leftNode -> parent = this;
@@ -56,14 +56,14 @@ public:
         }
 	}
 
-	BinarySearchTree<T>* searchKey(T x) {
+	movie *searchKey(std::string x) {
         if(pData == nullptr) {
             return nullptr;
         } else {
-            if(*pData == x) {
-                return this;
+            if(pData -> get_movie_id() == x) {
+                return pData;
             } else {
-                if(*pData > x) {
+                if(pData -> get_movie_id() > x) {
                     if(leftNode == nullptr) {
                         return nullptr;
                     } else {
@@ -85,7 +85,7 @@ public:
             leftNode -> inOrderDisplay();
         }
         if(pData != nullptr) {
-            std::cout << *pData << " ";
+            std::cout << pData -> get_movie_id() << " ";
         }
         if(rightNode != nullptr) {
             rightNode -> inOrderDisplay();

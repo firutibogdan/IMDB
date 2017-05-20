@@ -5,9 +5,77 @@
 
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 class movie {
  public:
+   movie() {}
+
+   movie(std::string movie_name,
+      std::string movie_id,
+      int timestamp,
+      std::vector<std::string> categories,
+      std::string director_name,
+      std::vector<std::string> actor_ids) {
+        this -> movie_id = movie_id;
+        this -> movie_name = movie_name;
+        this -> timestamp = timestamp;
+        this -> director_name = director_name;
+        this -> categories = categories;
+        this -> actor_ids = actor_ids;
+        this -> rate_sum = 0;
+        this -> nr_rates = 0;
+   }
+
+   ~movie(){}
+
+   std::string get_movie_id() {
+     return movie_id;
+   }
+
+   std::string get_movie_name() {
+     return movie_name;
+   }
+
+   int get_timestamp() {
+     return timestamp;
+   }
+
+   std::string get_director_name() {
+     return director_name;
+   }
+
+   std::vector<std::string> get_categories() {
+     return categories;
+   }
+
+   std::vector<std::string> get_actor_ids() {
+     return actor_ids;
+   }
+
+   int get_rate_sum() {
+     return rate_sum;
+   }
+
+   int get_nr_rates() {
+     return nr_rates;
+   }
+
+   void modify_rate(int x) {
+     rate_sum += x;
+   }
+
+   void modify_nr_rates(int x) {
+     nr_rates += x;
+   }
+
+   void add_rate(std::string user_id, int rating) {
+     user_rates[user_id] = rating;
+   }
+
+   int get_user_rate(std::string user_id) {
+     return user_rates[user_id];
+   }
 
  private:
    std::string movie_id;
@@ -16,8 +84,9 @@ class movie {
    std::string director_name;
    std::vector<std::string> categories;
    std::vector<std::string> actor_ids;
-   double rate_sum;
+   int rate_sum;
    int nr_rates;
+   std::unordered_map<std::string, int> user_rates;
 
 };
 
@@ -27,7 +96,9 @@ class user {
      this -> user_id = user_id;
      this -> name = name;
    }
+
    ~user(){}
+
    std::string get_user_id() {
      return user_id;
    }
@@ -45,7 +116,9 @@ class actor {
      this -> name = name;
      first = last = 0;
    }
+
    ~actor(){}
+
    std::string get_actor_id() {
      return actor_id;
    }
