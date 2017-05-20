@@ -4,6 +4,7 @@
 #include <iterator>
 #include <string>
 #include <vector>
+#include <cmath>
 
 #include "include/imdb.h"
 #include "include/classes.h"
@@ -21,9 +22,10 @@ void IMDb::add_movie(std::string movie_name,
    std::vector<std::string> categories,
    std::string director_name,
    std::vector<std::string> actor_ids) {
+
      movie new_movie(movie_name, movie_id, timestamp, categories,
        director_name, actor_ids);
-     movies.insertKey(new_movie);
+       movies.insertKey(new_movie);
 }
 
 void IMDb::add_user(std::string user_id, std::string name) {
@@ -75,6 +77,11 @@ void IMDb::add_rating(std::string user_id, std::string movie_id, int rating) {
 
 void IMDb::update_rating(std::string user_id, std::string movie_id,
                          int rating) {
+  movie* mov = movies.searchKey(movie_id);
+  int past_rate = mov->get_user_rate(user_id);
+  mov->modify_rate(-past_rate);
+  mov->modify_rate(rating);
+  mov->add_rate(user_id, rating);
 }
 
 void IMDb::remove_rating(std::string user_id, std::string movie_id) {
@@ -86,7 +93,18 @@ void IMDb::remove_rating(std::string user_id, std::string movie_id) {
 }
 
 std::string IMDb::get_rating(std::string movie_id) {
-    return "";
+    movie *mov = movies.searchKey(movie_id);
+    int rate_sum = mov->get_rate_sum();
+    int nr_rates = mov->get_nr_rates();
+    if(nr_rates == 0)
+      return "none";
+    double rate = double(rate_sum)/double(nr_rates);
+    rate *=1000;
+    int rateint = floor(rate);
+    if(rateint%10 >= 5) rateint+=10;
+    rate /= 10;
+    rate = double(rateint)/100;
+    return std::to_string(rate);
 }
 
 std::string IMDb::get_longest_career_actor() {
