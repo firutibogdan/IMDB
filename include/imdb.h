@@ -5,6 +5,7 @@
 
 #include <string>
 #include <vector>
+#include "classes.h"
 
 #define NONE                            "none"
 
@@ -44,6 +45,7 @@ class IMDb {
     void update_rating(std::string user_id, std::string movie_id, int rating);
     void remove_rating(std::string user_id, std::string movie_id);
 
+
     // queries
     std::string get_rating(std::string movie_id);
     std::string get_longest_career_actor();
@@ -61,6 +63,9 @@ class IMDb {
 
  private:
     // add any variables you need here.
+    std::vector<movie> movies;
+    std::vector<user> users;
+    std::vector<actor> actors;
 };
 
 #endif  // SD_TEMA3_INCLUDE_IMDB_H_

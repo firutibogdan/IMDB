@@ -1,10 +1,12 @@
 /* Copyright 2017 Andrei Petre */
 
+#include <iostream>
 #include <iterator>
 #include <string>
 #include <vector>
 
 #include "include/imdb.h"
+#include "include/classes.h"
 
 
 IMDb::IMDb() {
@@ -22,6 +24,22 @@ void IMDb::add_movie(std::string movie_name,
 }
 
 void IMDb::add_user(std::string user_id, std::string name) {
+  user new_user(user_id, name);
+  if(this -> users.empty()) {
+    this -> users.push_back(new_user);
+    return ;
+  }
+  int index = this -> users.size();
+  if(user_id > this -> users[index - 1].get_user_id()) {
+    this -> users.push_back(new_user);
+  } else {
+    for(auto it = this -> users.begin(); it != this -> users.end(); ++it) {
+      if(it -> get_user_id() > user_id) {
+        this -> users.insert(it, new_user);
+        break;
+      }
+    }
+  }
 }
 
 void IMDb::add_actor(std::string actor_id, std::string name) {
