@@ -11,7 +11,10 @@ template <typename T> struct Treap {
   int nr_nodes;
 
   Treap() : priority(-1), left(NULL), right(NULL), nil(true), nr_nodes(0) {}
-
+  ~Treap() {
+    delete left;
+    delete right;
+  }
   // Adaugam date, transformand un nod nil intr-un nod obisnuit
   void addData(T key, int priority) {
     this->nil = false;
@@ -108,15 +111,9 @@ template <typename T> struct Treap {
     }
   }
 
-  void inOrder() {
-    if (this->isNil()) {
-      return ;
-    }
-    if(this -> left) this -> left -> inOrder();
-    cout << this -> key << " ";
-    if(this -> right) this -> right -> inOrder();
+  T peek() {
+    return this->key;
   }
-
 };
 
 #endif  // SD_TEMA3_INCLUDE_TREAP_H_

@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <climits>
 
 class movie {
  public:
@@ -114,13 +115,30 @@ class actor {
    actor(std::string actor_id, std::string name) {
      this -> actor_id = actor_id;
      this -> name = name;
-     first = last = 0;
+     first = INT_MAX;
+     last = 0;
    }
 
    ~actor(){}
 
    std::string get_actor_id() {
      return actor_id;
+   }
+
+   int get_first() {
+     return first;
+   }
+
+   int get_last() {
+     return last;
+   }
+
+   void set_first(int x) {
+     this->first = x;
+   }
+
+   void set_last(int x) {
+     this->last = x;
    }
 
  private:

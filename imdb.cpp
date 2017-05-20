@@ -4,16 +4,20 @@
 #include <iterator>
 #include <string>
 #include <vector>
+#include <cmath>
 
 #include "include/imdb.h"
 #include "include/classes.h"
 #include "include/bst.h"
+#include "include/treap.h"
 
 IMDb::IMDb() {
-    // initialize what you need here.
+  activity = new Treap<std::string>;
 }
 
-IMDb::~IMDb() {}
+IMDb::~IMDb() {
+  delete activity;
+}
 
 void IMDb::add_movie(std::string movie_name,
    std::string movie_id,
@@ -24,6 +28,27 @@ void IMDb::add_movie(std::string movie_name,
      movie new_movie(movie_name, movie_id, timestamp, categories,
        director_name, actor_ids);
      movies.insertKey(new_movie);
+
+   for (auto it : actor_ids) {
+     actor *act = actor_bs(it, 0, actors.size() - 1);
+     if(act->get_first() == INT_MAX) {
+       act->set_first(timestamp);
+       act->set_last(timestamp);
+       activity->insert(activity, it, 0);
+     } else {
+        if(act->get_first() > timestamp) {
+          act->set_first(timestamp);
+          activity->erase(activity, it);
+          activity->insert(activity, it, act->get_last() - timestamp);
+        } else {
+          if(act->get_last() < timestamp) {
+            act->set_last(timestamp);
+            activity->erase(activity, it);
+            activity->insert(activity, it, timestamp - act->get_first());
+          }
+        }
+     }
+   }
 }
 
 void IMDb::add_user(std::string user_id, std::string name) {
@@ -63,7 +88,6 @@ void IMDb::add_actor(std::string actor_id, std::string name) {
         }
     }
   }
-
 }
 
 void IMDb::add_rating(std::string user_id, std::string movie_id, int rating) {
@@ -109,7 +133,8 @@ std::string IMDb::get_rating(std::string movie_id) {
 }
 
 std::string IMDb::get_longest_career_actor() {
-    return "";
+    if(activity->isNil()) return "none";
+    return activity->peek();
 }
 
 std::string IMDb::get_most_influential_director() {
@@ -142,4 +167,18 @@ std::string IMDb::get_top_k_most_popular_movies(int k) {
 
 std::string IMDb::get_avg_rating_in_range(int start, int end) {
     return "";
+}
+
+actor *IMDb::actor_bs(std::string actor_id, int left, int right) {
+    int mij = (left + right) / 2;
+    if (left > right)
+      return nullptr;
+    if(actors[mij].get_actor_id() == actor_id)
+      return &actors[mij];
+
+    if(actors[mij].get_actor_id() < actor_id){
+      return actor_bs(actor_id, mij + 1, right);
+    } else {
+      return actor_bs(actor_id, left, mij - 1);
+    }
 }

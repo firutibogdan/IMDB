@@ -7,6 +7,7 @@
 #include <vector>
 #include "classes.h"
 #include "bst.h"
+#include "treap.h"
 
 #define NONE                            "none"
 
@@ -45,7 +46,7 @@ class IMDb {
     void add_rating(std::string user_id, std::string movie_id, int rating);
     void update_rating(std::string user_id, std::string movie_id, int rating);
     void remove_rating(std::string user_id, std::string movie_id);
-
+    actor *actor_bs(std::string actor_id, int left, int right);
 
     // queries
     std::string get_rating(std::string movie_id);
@@ -67,6 +68,7 @@ class IMDb {
     BinarySearchTree<movie> movies;
     std::vector<user> users;
     std::vector<actor> actors;
+    Treap<std::string> *activity;
 };
 
 #endif  // SD_TEMA3_INCLUDE_IMDB_H_
