@@ -151,7 +151,7 @@ class actor {
 class director {
   public:
     director(){}
-    
+
     director(std::string director_name) {
       this -> director_name = director_name;
     }
@@ -171,5 +171,54 @@ class director {
     std::unordered_map<std::string, bool> known_actors;
 
 };
+
+class latest_movie{
+public:
+  const bool operator < ( const latest_movie &r ) const{
+        return ( timestamp< r.timestamp)
+               ||(( timestamp== r.timestamp) && ( movie_id > r.movie_id));
+    }
+  latest_movie(std::string movie_id, int timestamp) {
+    this->movie_id = movie_id;
+    this->timestamp = timestamp;
+  }
+  int get_t() const {
+    return timestamp;
+  }
+  std::string get_mid() const {
+    return movie_id;
+  }
+private:
+  int timestamp;
+  std::string movie_id;
+};
+
+class top_rating{
+public:
+  const bool operator < ( const top_rating &r ) const{
+        return ( rate < r.rate)
+               ||(( rate== r.rate) && ( id > r.id));
+    }
+  /*const bool operator == (const top_rating &r) const {
+      return movie_id == r.movie_id;
+  }*/
+    top_rating(std::string id, double rate) {
+      this->id = id;
+      this->rate = rate;
+    }
+    int get_rate() const{
+      return rate;
+    }
+
+    std::string get_id() const {
+      return id;
+    }
+
+private:
+  int rate;
+  std::string id;
+};
+
+
 
 #endif  // SD_TEMA3_INCLUDE_CLASSES_H_

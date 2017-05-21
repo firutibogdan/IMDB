@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <set>
 #include "classes.h"
 #include "bst.h"
 #include "treap.h"
@@ -70,9 +71,11 @@ class IMDb {
     Treap<std::string, int> *activity;
     Treap<std::string, int> *directors;
     std::unordered_map<std::string, director> d_info;
-    std::unordered_map<std::string, Treap<int, double>* > categ;
+//    std::unordered_map<std::string, Treap<int, double>* > categ;
     std::vector<user> users;
     std::vector<actor> actors;
+    std::set<latest_movie> latest_movies;
+    std::set<top_rating> rtop;
 };
 
 #endif  // SD_TEMA3_INCLUDE_IMDB_H_
