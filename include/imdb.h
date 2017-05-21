@@ -5,6 +5,7 @@
 
 #include <string>
 #include <vector>
+#include <unordered_map>
 #include "classes.h"
 #include "bst.h"
 #include "treap.h"
@@ -66,9 +67,11 @@ class IMDb {
  private:
     // add any variables you need here.
     BinarySearchTree<movie> movies;
+    Treap<std::string> *activity;
+    Treap<std::string> *directors;
+    std::unordered_map<std::string, director> d_info;
     std::vector<user> users;
     std::vector<actor> actors;
-    Treap<std::string> *activity;
 };
 
 #endif  // SD_TEMA3_INCLUDE_IMDB_H_

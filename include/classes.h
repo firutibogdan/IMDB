@@ -134,17 +134,41 @@ class actor {
    }
 
    void set_first(int x) {
-     this->first = x;
+     this -> first = x;
    }
 
    void set_last(int x) {
-     this->last = x;
+     this -> last = x;
    }
 
  private:
    std::string actor_id;
    std::string name;
    int first, last;
+
+};
+
+class director {
+  public:
+    director(){}
+    
+    director(std::string director_name) {
+      this -> director_name = director_name;
+    }
+
+    ~director(){}
+
+    void add_known_actors(std::string actor_id) {
+      known_actors[actor_id] = true;
+    }
+
+    int nr_known_actors() {
+      return known_actors.size();
+    }
+
+  private:
+    std::string director_name;
+    std::unordered_map<std::string, bool> known_actors;
 
 };
 

@@ -4,19 +4,23 @@
 #include <iterator>
 #include <string>
 #include <vector>
-#include <cmath>
 
+#include <cmath>
+#include <climits>
 #include "include/imdb.h"
 #include "include/classes.h"
 #include "include/bst.h"
 #include "include/treap.h"
 
 IMDb::IMDb() {
-  activity = new Treap<std::string>;
+    // initialize what you need here.
+    activity = new Treap<std::string>;
+    directors = new Treap<std::string>;
 }
 
 IMDb::~IMDb() {
   delete activity;
+  delete directors;
 }
 
 void IMDb::add_movie(std::string movie_name,
@@ -29,26 +33,48 @@ void IMDb::add_movie(std::string movie_name,
        director_name, actor_ids);
      movies.insertKey(new_movie);
 
-   for (auto it : actor_ids) {
-     actor *act = actor_bs(it, 0, actors.size() - 1);
-     if(act->get_first() == INT_MAX) {
-       act->set_first(timestamp);
-       act->set_last(timestamp);
-       activity->insert(activity, it, 0);
-     } else {
-        if(act->get_first() > timestamp) {
-          act->set_first(timestamp);
-          activity->erase(activity, it);
-          activity->insert(activity, it, act->get_last() - timestamp);
-        } else {
-          if(act->get_last() < timestamp) {
-            act->set_last(timestamp);
-            activity->erase(activity, it);
-            activity->insert(activity, it, timestamp - act->get_first());
-          }
-        }
+     for(auto it : actor_ids) {
+       actor *act = this -> actor_bs(it, 0, actors.size() - 1);
+       if(act -> get_first() == INT_MAX) {
+         act -> set_first(timestamp);
+         act -> set_last(timestamp);
+         this -> activity -> insert(activity, it, 0);
+       } else {
+         if(act -> get_first() > timestamp) {
+           act -> set_first(timestamp);
+           this -> activity -> erase(activity, it);
+           this -> activity -> insert(activity, it, act -> get_last() - timestamp);
+         } else if(act -> get_last() < timestamp) {
+           act -> set_last(timestamp);
+           this -> activity -> erase(activity, it);
+           this -> activity -> insert(activity, it, timestamp - act -> get_first());
+         }
+       }
      }
-   }
+
+     if(this -> directors -> find(director_name)) {
+
+       int acts = directors -> get_priority(director_name);
+       director old_director = d_info[director_name];
+       for(auto it : actor_ids) {
+         old_director.add_known_actors(it);
+       }
+       if(old_director.nr_known_actors() != acts) {
+         d_info[director_name] = old_director;
+         directors -> erase(directors, director_name);
+         directors -> insert(directors, director_name, old_director.nr_known_actors());
+       }
+
+     } else {
+
+       director new_director(director_name);
+       for(auto it : actor_ids) {
+         new_director.add_known_actors(it);
+       }
+       d_info[director_name] = new_director;
+       directors -> insert(directors, director_name, actor_ids.size());
+
+     }
 }
 
 void IMDb::add_user(std::string user_id, std::string name) {
@@ -133,12 +159,17 @@ std::string IMDb::get_rating(std::string movie_id) {
 }
 
 std::string IMDb::get_longest_career_actor() {
-    if(activity->isNil()) return "none";
-    return activity->peek();
+    if(this -> activity -> isNil()) {
+      return "none";
+    }
+    return this -> activity -> peek();
 }
 
 std::string IMDb::get_most_influential_director() {
-    return "";
+  if(this -> directors -> isNil()) {
+    return "none";
+  }
+  return this -> directors -> peek();
 }
 
 std::string IMDb::get_best_year_for_category(std::string category) {
@@ -170,15 +201,16 @@ std::string IMDb::get_avg_rating_in_range(int start, int end) {
 }
 
 actor *IMDb::actor_bs(std::string actor_id, int left, int right) {
-    int mij = (left + right) / 2;
-    if (left > right)
-      return nullptr;
-    if(actors[mij].get_actor_id() == actor_id)
-      return &actors[mij];
-
-    if(actors[mij].get_actor_id() < actor_id){
-      return actor_bs(actor_id, mij + 1, right);
-    } else {
-      return actor_bs(actor_id, left, mij - 1);
-    }
+  if(left > right) {
+    return nullptr;
+  }
+  int mij = (left + right) / 2;
+  if(actors[mij].get_actor_id() == actor_id) {
+    return &actors[mij];
+  }
+  if(actors[mij].get_actor_id() < actor_id) {
+    return actor_bs(actor_id, mij + 1, right);
+  } else {
+    return actor_bs(actor_id, left, mij - 1);
+  }
 }

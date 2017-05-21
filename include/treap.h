@@ -12,9 +12,10 @@ template <typename T> struct Treap {
 
   Treap() : priority(-1), left(NULL), right(NULL), nil(true), nr_nodes(0) {}
   ~Treap() {
-    delete left;
-    delete right;
+    delete this -> left;
+    delete this -> right;
   }
+
   // Adaugam date, transformand un nod nil intr-un nod obisnuit
   void addData(T key, int priority) {
     this->nil = false;
@@ -54,6 +55,22 @@ template <typename T> struct Treap {
     return false;
   }
 
+  int get_priority(T key) {
+    if (this->isNil()) {
+      return 0;
+    }
+    // TODO: Completati functia de cautare
+    if(this -> key == key) {
+        return this -> priority;
+    }
+    if(this -> key > key) {
+        return this -> left -> get_priority(key);
+    } else {
+        return this -> right -> get_priority(key);
+    }
+    return 0;
+  }
+
   void rotateRight(Treap<T> *&fatherPointer) {
     Treap<T> *node = this -> left;
     fatherPointer = this -> left;
@@ -76,15 +93,19 @@ template <typename T> struct Treap {
       return ;
     }
 
-    if (key < this->key) {
+    if (key < this -> key) {
         this -> left -> insert(this -> left, key, priority);
     } else {
         this -> right -> insert(this -> right, key, priority);
     }
 
-    if (this->left->priority > this->priority) {
+    if ((this -> left -> priority > this -> priority) ||
+        (this -> left -> priority == this -> priority &&
+         this -> left -> key < this -> key)){
         this -> rotateRight(fatherPointer);
-    } else if (this->right->priority > this->priority) {
+    } else if ((this -> right -> priority > this->priority) ||
+               (this -> right -> priority == this -> priority &&
+                this -> right -> key < this -> key)){
         this -> rotateLeft(fatherPointer);
     }
   }
@@ -112,8 +133,9 @@ template <typename T> struct Treap {
   }
 
   T peek() {
-    return this->key;
+    return this -> key;
   }
+
 };
 
 #endif  // SD_TEMA3_INCLUDE_TREAP_H_
