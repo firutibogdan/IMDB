@@ -2,14 +2,15 @@
 #define SD_TEMA3_INCLUDE_TREAP_H_
 
 #include <iostream>
+#include <unordered_map>
 
 template <typename T, typename R> struct Treap {
   T key;
   R priority;
   Treap<T, R> *left, *right;
   bool nil;
-  int nr_movies;
   int nr_nodes;
+  std::unordered_map<std::string, bool> m_rate;
 
   Treap() : priority(-1), left(NULL), right(NULL), nil(true), nr_nodes(0) {}
   ~Treap() {
@@ -72,24 +73,35 @@ template <typename T, typename R> struct Treap {
     return 0;
   }
 
-  int get_nr_movies(T key) {
+  std::unordered_map<std::string, bool> get_hash(T key) {
     if (this->isNil()) {
-      return 0;
+      return std::unordered_map<std::string, bool>();
     }
     // TODO: Completati functia de cautare
     if(this -> key == key) {
-        return this -> nr_movies;
+        return this -> m_rate;
     }
     if(this -> key > key) {
-        return this -> left -> get_priority(key);
+        return this -> left -> get_hash(key);
     } else {
-        return this -> right -> get_priority(key);
+        return this -> right -> get_hash(key);
     }
-    return 0;
+    return std::unordered_map<std::string, bool>();
   }
 
-  void modify_nr_movies(int x) {
-    this -> nr_movies += x;
+  void set_hash(T key, std::unordered_map<std::string, bool> new_hash) {
+    if (this->isNil()) {
+      return;
+    }
+    // TODO: Completati functia de cautare
+    if(this -> key == key) {
+        m_rate = new_hash;
+    }
+    if(this -> key > key) {
+        this -> left -> set_hash(key, new_hash);
+    } else {
+        this -> right -> set_hash(key, new_hash);
+    }
   }
 
   void rotateRight(Treap<T, R> *&fatherPointer) {

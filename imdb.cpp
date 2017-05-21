@@ -7,6 +7,7 @@
 
 #include <cmath>
 #include <climits>
+#include <ctime>
 #include "include/imdb.h"
 #include "include/classes.h"
 #include "include/bst.h"
@@ -21,6 +22,9 @@ IMDb::IMDb() {
 IMDb::~IMDb() {
   delete activity;
   delete directors;
+  for(auto it : categ) {
+    delete it.second;
+  }
 }
 
 void IMDb::add_movie(std::string movie_name,
@@ -124,36 +128,122 @@ void IMDb::add_actor(std::string actor_id, std::string name) {
 
 void IMDb::add_rating(std::string user_id, std::string movie_id, int rating) {
   movie *mov = this -> movies.searchKey(movie_id);
+  std::string old_rating = get_rating(movie_id);
+  double d_rate;
+  if(old_rating == "none") {
+    d_rate = 0;
+  } else {
+    d_rate = std::stod(old_rating);
+  }
   mov -> add_rate(user_id, rating);
   mov -> modify_rate(rating);
   mov -> modify_nr_rates(1);
+
   std::vector<std::string> cat_list = mov -> get_categories();
   int year = mov -> get_timestamp();
-/*  for(auto it : cat_list) {
+  time_t startTime_t = (time_t) year;
+  std::string startTime = asctime(localtime(&startTime_t));
+  startTime = startTime.substr(startTime.find('\n') - 4, 4);
+  year = std::stoi(startTime);
+
+  for(auto it : cat_list) {
     if(categ[it] -> find(year)) {
+      std::unordered_map<std::string, bool> aux = categ[it] -> get_hash(year);
+      double old_rate = categ[it] -> get_priority(year);
+
+      aux[movie_id] = 1;
+      old_rate *= aux.size();
+      old_rate -= d_rate;
+      old_rate += std::stod(get_rating(movie_id));
+
+      categ[it] -> erase(categ[it], year);
+      categ[it] -> insert(categ[it], year, old_rate / double(aux.size()));
+      categ[it] -> set_hash(year, aux);
 
     } else {
-      categ[it] -> insert(categ[it], year, mov -> get_rate_sum());
-      categ[it] -> modify_nr_rates(1);
+      categ[it] -> insert(categ[it], year, std::stod(get_rating(movie_id)));
+      std::unordered_map<std::string, bool> aux;
+      aux[movie_id] = 1;
+      categ[it] -> set_hash(year, aux);
     }
-  }*/
+  }
 }
 
 void IMDb::update_rating(std::string user_id, std::string movie_id,
                          int rating) {
   movie* mov = movies.searchKey(movie_id);
   int past_rate = mov->get_user_rate(user_id);
+  std::string old_rating = get_rating(movie_id);
+  double d_rate;
+  if(old_rating == "none") {
+    d_rate = 0;
+  } else {
+    d_rate = std::stod(old_rating);
+  }
   mov->modify_rate(-past_rate);
   mov->modify_rate(rating);
   mov->add_rate(user_id, rating);
+
+  std::vector<std::string> cat_list = mov -> get_categories();
+  int year = mov -> get_timestamp();
+  time_t startTime_t = (time_t) year;
+  std::string startTime = asctime(localtime(&startTime_t));
+  startTime = startTime.substr(startTime.find('\n') - 4, 4);
+  year = std::stoi(startTime);
+
+  for(auto it : cat_list) {
+    std::unordered_map<std::string, bool> aux = categ[it] -> get_hash(year);
+    double old_rate = categ[it] -> get_priority(year);
+
+    old_rate *= aux.size();
+    old_rate -= d_rate;
+    old_rate += std::stod(get_rating(movie_id));
+
+    categ[it] -> erase(categ[it], year);
+    categ[it] -> insert(categ[it], year, old_rate / double(aux.size()));
+    categ[it] -> set_hash(year, aux);
+  }
 }
 
 void IMDb::remove_rating(std::string user_id, std::string movie_id) {
   movie *mov = this -> movies.searchKey(movie_id);
   int past_rate = mov -> get_user_rate(user_id);
+  std::string old_rating = get_rating(movie_id);
+  double d_rate;
+  if(old_rating == "none") {
+    d_rate = 0;
+  } else {
+    d_rate = std::stod(old_rating);
+  }
   mov -> add_rate(movie_id, 0);
   mov -> modify_rate(- past_rate);
   mov -> modify_nr_rates(-1);
+
+  std::vector<std::string> cat_list = mov -> get_categories();
+  int year = mov -> get_timestamp();
+  time_t startTime_t = (time_t) year;
+  std::string startTime = asctime(localtime(&startTime_t));
+  startTime = startTime.substr(startTime.find('\n') - 4, 4);
+  year = std::stoi(startTime);
+
+  for(auto it : cat_list) {
+    std::unordered_map<std::string, bool> aux = categ[it] -> get_hash(year);
+    double old_rate = categ[it] -> get_priority(year);
+
+    old_rate *= aux.size();
+    old_rate -= d_rate;
+    if(mov -> get_nr_rates() != 0) {
+      old_rate += std::stod(get_rating(movie_id));
+    } else {
+      aux.erase(movie_id);
+    }
+
+    categ[it] -> erase(categ[it], year);
+    if(aux.size() != 0) {
+      categ[it] -> insert(categ[it], year, old_rate / double(aux.size()));
+      categ[it] -> set_hash(year, aux);
+    }
+  }
 }
 
 std::string IMDb::get_rating(std::string movie_id) {
@@ -189,7 +279,14 @@ std::string IMDb::get_most_influential_director() {
 }
 
 std::string IMDb::get_best_year_for_category(std::string category) {
-    return "";
+  if(categ[category] == nullptr) {
+    return "none";
+  } else {
+    if(this -> categ[category] -> isNil()) {
+      return "none";
+    }
+    return std::to_string(this -> categ[category] -> peek());
+  }
 }
 
 std::string IMDb::get_2nd_degree_colleagues(std::string actor_id) {
