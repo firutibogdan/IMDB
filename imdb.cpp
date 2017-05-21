@@ -14,8 +14,8 @@
 
 IMDb::IMDb() {
     // initialize what you need here.
-    activity = new Treap<std::string>;
-    directors = new Treap<std::string>;
+    activity = new Treap<std::string, int>;
+    directors = new Treap<std::string, int>;
 }
 
 IMDb::~IMDb() {
@@ -75,6 +75,12 @@ void IMDb::add_movie(std::string movie_name,
        directors -> insert(directors, director_name, actor_ids.size());
 
      }
+
+     for(auto it : categories) {
+       if(categ[it] == nullptr) {
+         categ[it] = new Treap<int, double>;
+       }
+     }
 }
 
 void IMDb::add_user(std::string user_id, std::string name) {
@@ -121,6 +127,16 @@ void IMDb::add_rating(std::string user_id, std::string movie_id, int rating) {
   mov -> add_rate(user_id, rating);
   mov -> modify_rate(rating);
   mov -> modify_nr_rates(1);
+  std::vector<std::string> cat_list = mov -> get_categories();
+  int year = mov -> get_timestamp();
+/*  for(auto it : cat_list) {
+    if(categ[it] -> find(year)) {
+
+    } else {
+      categ[it] -> insert(categ[it], year, mov -> get_rate_sum());
+      categ[it] -> modify_nr_rates(1);
+    }
+  }*/
 }
 
 void IMDb::update_rating(std::string user_id, std::string movie_id,

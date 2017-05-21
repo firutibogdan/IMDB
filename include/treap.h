@@ -3,11 +3,12 @@
 
 #include <iostream>
 
-template <typename T> struct Treap {
+template <typename T, typename R> struct Treap {
   T key;
-  int priority;
-  Treap<T> *left, *right;
+  R priority;
+  Treap<T, R> *left, *right;
   bool nil;
+  int nr_movies;
   int nr_nodes;
 
   Treap() : priority(-1), left(NULL), right(NULL), nil(true), nr_nodes(0) {}
@@ -17,7 +18,7 @@ template <typename T> struct Treap {
   }
 
   // Adaugam date, transformand un nod nil intr-un nod obisnuit
-  void addData(T key, int priority) {
+  void addData(T key, R priority) {
     this->nil = false;
     this->key = key;
     this->priority = priority;
@@ -71,22 +72,42 @@ template <typename T> struct Treap {
     return 0;
   }
 
-  void rotateRight(Treap<T> *&fatherPointer) {
-    Treap<T> *node = this -> left;
+  int get_nr_movies(T key) {
+    if (this->isNil()) {
+      return 0;
+    }
+    // TODO: Completati functia de cautare
+    if(this -> key == key) {
+        return this -> nr_movies;
+    }
+    if(this -> key > key) {
+        return this -> left -> get_priority(key);
+    } else {
+        return this -> right -> get_priority(key);
+    }
+    return 0;
+  }
+
+  void modify_nr_movies(int x) {
+    this -> nr_movies += x;
+  }
+
+  void rotateRight(Treap<T, R> *&fatherPointer) {
+    Treap<T, R> *node = this -> left;
     fatherPointer = this -> left;
     this -> left = this -> left -> right;
     node -> right = this;
 
   }
 
-  void rotateLeft(Treap<T> *&fatherPointer) {
-    Treap<T> *node = this -> right;
+  void rotateLeft(Treap<T, R> *&fatherPointer) {
+    Treap<T, R> *node = this -> right;
     fatherPointer = this -> right;
     this -> right = this -> right -> left;
     node -> left = this;
   }
 
-  void insert(Treap<T> *&fatherPointer, T key, int priority) {
+  void insert(Treap<T, R> *&fatherPointer, T key, R priority) {
     if (this->isNil()) {
       this->addData(key, priority);
 
@@ -110,7 +131,7 @@ template <typename T> struct Treap {
     }
   }
 
-  void erase(Treap<T> *&fatherPointer, T key) {
+  void erase(Treap<T, R> *&fatherPointer, T key) {
     if (this->isNil()) {
       return ;
     }

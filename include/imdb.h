@@ -67,9 +67,10 @@ class IMDb {
  private:
     // add any variables you need here.
     BinarySearchTree<movie> movies;
-    Treap<std::string> *activity;
-    Treap<std::string> *directors;
+    Treap<std::string, int> *activity;
+    Treap<std::string, int> *directors;
     std::unordered_map<std::string, director> d_info;
+    std::unordered_map<std::string, Treap<int, double>* > categ;
     std::vector<user> users;
     std::vector<actor> actors;
 };
