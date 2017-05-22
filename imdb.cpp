@@ -81,6 +81,29 @@ void IMDb::add_movie(std::string movie_name,
 
      top_rating newrt(movie_id, 0);
      rtop.insert(newrt);
+
+     // partners
+
+     for (auto it = actor_ids.begin(); it != actor_ids.end(); ++it) {
+       std::set<top_rating> aux;
+       if (!partners[*it].empty())
+          aux = partners[*it];
+
+       for (auto itt = actor_ids.begin(); itt != actor_ids.end(); ++itt)
+         if(it != itt) {
+           auto index = aux.find(*itt);
+           int newrate;
+           if(index == aux.end()) {
+             newrate = 0;
+           } else {
+             newrate = index->get_rate() + 1;
+             aux.erase(index);
+           }
+           top_rating newp(*itt, newrate);
+           aux.insert(newp);
+         }
+         partners[*it] = aux;
+    }
 }
 
 void IMDb::add_user(std::string user_id, std::string name) {
@@ -248,7 +271,22 @@ std::string IMDb::get_top_k_actor_pairs(int k) {
 }
 
 std::string IMDb::get_top_k_partners_for_actor(int k, std::string actor_id) {
-    return "";
+    std::set<top_rating> aux;
+    aux = partners[actor_id];
+
+    if(aux.empty()) return "none";
+
+    //return "dc";
+    std::set<top_rating>::reverse_iterator it = aux.rbegin();
+    std::string answer = it->get_id();
+
+    ++it;
+    for(int i = 2; i <= k && it != aux.rend(); ++i) {
+      answer += " ";
+      answer += it->get_id();
+      ++it;
+    }
+    return answer;
 }
 
 std::string IMDb::get_top_k_most_popular_movies(int k) {

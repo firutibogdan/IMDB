@@ -76,6 +76,7 @@ class IMDb {
     std::vector<actor> actors;
     std::set<latest_movie> latest_movies;
     std::set<top_rating> rtop;
+    std::unordered_map<std::string, std::set<top_rating>> partners;
 };
 
 #endif  // SD_TEMA3_INCLUDE_IMDB_H_

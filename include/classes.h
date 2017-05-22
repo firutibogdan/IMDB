@@ -199,9 +199,15 @@ public:
         return ( rate < r.rate)
                ||(( rate== r.rate) && ( id > r.id));
     }
-  /*const bool operator == (const top_rating &r) const {
-      return movie_id == r.movie_id;
-  }*/
+
+    top_rating(const std::string& strKey = "", const int& strData = 1)
+      : id(strKey),
+        rate(strData) {}
+
+    bool operator==(const top_rating& rhs) const
+    {
+      return id == rhs.id;
+    }
     top_rating(std::string id, double rate) {
       this->id = id;
       this->rate = rate;
