@@ -281,6 +281,56 @@ private:
     std::unordered_map<std::string, bool> m_rate;
 };
 
+class top_pair {
+  public:
+    bool operator==(const top_pair& rhs) const {
+      return (act1 == rhs.act1 && act2 == rhs.act2);
+    }
+
+    const bool operator < ( const top_pair &r ) const {
+          return ( value < r.value)
+                 ||(( value == r.value) && ( act1 > r.act1))  || ((value == r.value) && (act1 == r.act1) && (act2 > r.act2) );
+    }
+
+  /*  top_rating(const std::string& one = "", const std::string& two = "", const int& strData = 1)
+      : act1(one),
+        act2(two),
+        rate(strData) {}
+*/
+    top_pair() {}
+    top_pair(std::string one, std::string two, double val) {
+        this->act1 = one;
+        this->act2 = two;
+        this->value = val;
+    }
+    std::string get_one() const {
+      return act1;
+    }
+
+    std::string get_two() const {
+      return act2;
+    }
+
+    int get_val() const {
+      return value;
+    }
+
+    void set_act1(std::string act) {
+      act1 = act;
+    }
+
+    void set_act2(std::string act) {
+      act2 = act;
+    }
+
+    void set_val(int val) {
+      value = val;
+    }
+
+  private:
+    int value;
+    std::string act1, act2;
+};
 
 
 #endif  // SD_TEMA3_INCLUDE_CLASSES_H_

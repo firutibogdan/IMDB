@@ -94,13 +94,32 @@ void IMDb::add_movie(std::string movie_name,
            auto index = find(aux.begin(), aux.end(), *itt);
            int newrate;
            if(index == aux.end()) {
-             newrate = 0;
+             newrate = 1;
            } else {
              newrate = index->get_rate() + 1;
              aux.erase(index);
            }
            top_rating newp(*itt, newrate);
            aux.insert(newp);
+
+           //for pairs
+
+           top_pair newpair;
+           if (*itt< *it) {
+             newpair.set_act1(*itt);
+             newpair.set_act2(*it);
+             newpair.set_val(newrate - 1);
+           } else {
+             newpair.set_act1(*it);
+             newpair.set_act2(*itt);
+             newpair.set_val(newrate - 1);
+           }
+
+           if (pairs.find(newpair) != pairs.end()) {
+              pairs.erase(newpair);
+           }
+           newpair.set_val(newrate);
+           pairs.insert(newpair);
          }
          partners[*it] = aux;
      }
@@ -372,7 +391,26 @@ std::string IMDb::get_top_k_most_recent_movies(int k) {
 }
 
 std::string IMDb::get_top_k_actor_pairs(int k) {
-    return "none";
+    if(pairs.empty())
+      return "none";
+
+    /*for(auto it : pairs) {
+      std::cout << it.get_one() << " " << it.get_two() << "\n\n";
+    }
+    std::cout << " \n\n";
+*/
+    auto it = pairs.rbegin();
+    std::string answer;
+    answer += "(" + it->get_one() + " " + it->get_two();
+    answer += " " + std::to_string(it->get_val()) + ")";
+    ++it;
+    for (int i = 2; i <= k && it != pairs.rend(); ++i) {
+      answer += " (" + it->get_one() + " " + it->get_two();
+      answer += " " + std::to_string(it->get_val()) + ")";
+      ++it;
+    }
+    //answer += "-----";
+    return answer;
 }
 
 std::string IMDb::get_top_k_partners_for_actor(int k, std::string actor_id) {
