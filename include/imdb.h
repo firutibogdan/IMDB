@@ -71,7 +71,7 @@ class IMDb {
     Treap<std::string, int> *activity;
     Treap<std::string, int> *directors;
     std::unordered_map<std::string, director> d_info;
-//    std::unordered_map<std::string, Treap<int, double>* > categ;
+    std::unordered_map<std::string, std::set<year_rating>> categ;
     std::vector<user> users;
     std::vector<actor> actors;
     std::set<latest_movie> latest_movies;

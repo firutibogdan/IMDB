@@ -225,6 +225,62 @@ private:
   std::string id;
 };
 
+class year_rating{
+public:
+    const bool operator < (const year_rating &r) const {
+        return (rating < r.rating) || ((rating == r.rating) && (year > r.year));
+    }
+
+    year_rating(const std::string& strKey = "", const int& strData = 1)
+      : year(strKey),
+        rating(strData) {}
+
+    bool operator==(const year_rating &r) const
+    {
+      return year == r.year;
+    }
+
+    year_rating(std::string key, double value) {
+        year = key;
+        rating = value;
+    }
+
+    year_rating operator = (const year_rating &r) {
+        this -> year = r.year;
+        this -> rating = r.rating;
+        this -> m_rate = r.m_rate;
+    }
+
+    double get_rating() const{
+        return rating;
+    }
+
+    void set_rating(double r) {
+        rating = r;
+    }
+
+    std::string get_year() const {
+        return year;
+    }
+
+    int get_nr_movies() const {
+        return m_rate.size();
+    }
+
+    void add_movie(std::string movie_id) {
+        m_rate[movie_id] = 1;
+    }
+
+    void remove_movie(std::string movie_id) {
+        m_rate.erase(movie_id);
+    }
+
+private:
+    std::string year;
+    double rating;
+    std::unordered_map<std::string, bool> m_rate;
+};
+
 
 
 #endif  // SD_TEMA3_INCLUDE_CLASSES_H_
